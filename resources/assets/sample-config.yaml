@@ -54,6 +54,10 @@ gaps:
     bottom: '20px'
     left: '20px'
 
+  # Offset between stacked windows in an accordion-layout container (see
+  # `toggle-tiling-layout`), per step away from the focused window.
+  accordion_padding: '30px'
+
 window_effects:
   # Visual effects to apply to the focused window.
   focused_window:
@@ -220,6 +224,14 @@ keybindings:
   # be inserted.
   - commands: ['toggle-tiling-direction']
     bindings: ['alt+v']
+
+  # Toggle the focused container between normal tiling and accordion
+  # layout, where windows overlap with the focused one on top and others
+  # peeking out at the edge (akin to i3's tabbed/stacked layouts). Which
+  # edge they peek out from depends on the current tiling direction set
+  # via `toggle-tiling-direction` above.
+  - commands: ['toggle-tiling-layout']
+    bindings: ['alt+w']
 
   # Change focus from tiling windows -> floating -> fullscreen.
   - commands: ['wm-cycle-focus']

@@ -7,8 +7,8 @@ use std::{
 use anyhow::Context;
 use uuid::Uuid;
 use wm_common::{
-  ActiveDrag, ContainerDto, DisplayState, GapsConfig, TilingDirection,
-  WindowDto, WindowRuleConfig, WindowState,
+  ActiveDrag, ContainerDto, ContainerLayout, DisplayState, GapsConfig,
+  TilingDirection, WindowDto, WindowRuleConfig, WindowState,
 };
 use wm_platform::{NativeWindow, Rect, RectDelta};
 
@@ -22,8 +22,8 @@ use crate::{
     WindowContainer,
   },
   traits::{
-    CommonGetters, PositionGetters, TilingDirectionGetters,
-    TilingSizeGetters, WindowGetters,
+    CommonGetters, ContainerLayoutGetters, PositionGetters,
+    TilingDirectionGetters, TilingSizeGetters, WindowGetters,
   },
 };
 

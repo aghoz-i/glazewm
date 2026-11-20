@@ -41,6 +41,32 @@ pub trait TilingSizeGetters: CommonGetters {
     ))
   }
 
+  /// Gets the horizontal and vertical accordion padding in pixels.
+  ///
+  /// Mirrors `inner_gaps`'s convention of computing the horizontal value
+  /// relative to the monitor's height and vice versa, so that a percentage
+  /// padding scales consistently regardless of the accordion's orientation.
+  fn accordion_paddings(&self) -> anyhow::Result<(i32, i32)> {
+    let monitor = self.monitor().context("No monitor.")?;
+    let monitor_rect = monitor.native_properties().bounds;
+    let gaps_config = self.gaps_config();
+
+    let scale_factor = if gaps_config.scale_with_dpi {
+      monitor.native_properties().scale_factor
+    } else {
+      1.
+    };
+
+    Ok((
+      gaps_config
+        .accordion_padding
+        .to_px(monitor_rect.height(), Some(scale_factor)),
+      gaps_config
+        .accordion_padding
+        .to_px(monitor_rect.width(), Some(scale_factor)),
+    ))
+  }
+
   /// Gets the container to resize when resizing a tiling window.
   fn container_to_resize(
     &self,

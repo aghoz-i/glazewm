@@ -1,6 +1,7 @@
 # Accordion tiling layout — implementation plan
 
-Status: **approved, not yet implemented**
+Status: **implemented (commit `c1e4c811`), geometry revised after first
+round of manual testing (see "Post-implementation revision" below)**
 Branch: `feature/accordion-layout`
 
 ## Background
@@ -132,17 +133,38 @@ on `parent.container_layout()`:
 
 - **`Tiling`** (existing): unchanged — proportional space-splitting math as
   today.
-- **`Accordion`**: every child gets the parent's full rect, inset by a
-  configurable padding (`gaps.accordion_padding`, reusing the exact config
-  key the open upstream PR already uses — default 30px) multiplied by the
-  child's offset from the focused child in tree order. For each tiling
-  sibling: `offset = sibling_index - focused_index` (signed); shift the
-  parent's rect by `offset * accordion_padding` along the accordion's axis
-  (horizontal shift for `TilingDirection::Horizontal`, vertical for
-  `Vertical`), same width/height as the parent. The focused child (offset 0)
-  sits flush with the parent's bounds; siblings before/after peek out by
-  `padding * |offset|` pixels on their respective side.
-  `tiling_size` is simply ignored in this branch (not read, not cleared).
+- **`Accordion`**: see "Post-implementation revision" below for the
+  geometry actually shipped. `tiling_size` is ignored in this branch (not
+  read, not cleared) either way.
+
+### Post-implementation revision (2026-11-21, after first manual test)
+
+First version made every child the *same size as the whole accordion
+container*, then shifted it by `offset * accordion_padding` from the
+focused child. User feedback after testing: this let the stack overflow
+past the accordion container's own bounds (into sibling space, or off the
+monitor edge for a top-level accordion) once there were enough windows or
+large enough offsets — the container's rect should represent "the space
+the window that's supposed to be there would occupy," and nothing should
+spill outside it.
+
+Revised to a uniform-shrink cascade (confirmed with user: uniform shrink
+over "focused stays full-size, only neighbors shrink," and dynamic
+padding shrink over capping visible peeks): every child, including the
+focused one, is sized `container_dimension - (N-1) * padding` along the
+accordion's axis, positioned at `tree_index * padding` from the
+container's edge — so the whole cascade always fits exactly within the
+container's own rect, regardless of N. If `(N-1) * padding` would exceed
+the container's dimension, padding is dynamically shrunk
+(`container_dimension / N`, floored at 1px) so it still fits however many
+windows there are, rather than capping how many peek and hiding the rest.
+
+This also simplified the implementation: position no longer needs to know
+which child is focused at all (that's purely a z-order concern, handled
+separately — see decision 7's correction above) — it's now pure tree-index
+cascade math. Extracted into a standalone function,
+`accordion_child_rect` in `position_getters.rs`, called via a `$crate::`
+path from the macro (which otherwise hit clippy's `too_many_lines`).
 
 ## New commands
 
