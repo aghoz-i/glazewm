@@ -7,14 +7,14 @@ use std::{
 use anyhow::Context;
 use uuid::Uuid;
 use wm_common::{
-  ContainerDto, ContainerLayout, GapsConfig, TilingDirection, WorkspaceConfig,
-  WorkspaceDto,
+  ContainerDto, ContainerLayout, GapsConfig, TilingDirection,
+  WorkspaceConfig, WorkspaceDto,
 };
 use wm_platform::{Rect, RectDelta};
 
 use crate::{
-  impl_common_getters, impl_container_debug, impl_container_layout_getters,
-  impl_tiling_direction_getters,
+  impl_common_getters, impl_container_debug,
+  impl_container_layout_getters, impl_tiling_direction_getters,
   models::{
     Container, DirectionContainer, TilingContainer, WindowContainer,
   },

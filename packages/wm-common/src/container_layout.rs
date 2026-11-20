@@ -7,9 +7,10 @@ use serde::{Deserialize, Serialize};
 /// fully overlap, cascading out from the focused child (`Accordion`).
 ///
 /// Orthogonal to [`crate::TilingDirection`], which only ever describes
-/// orientation. An accordion container's `TilingDirection` still determines
-/// whether it peeks sideways (reads like tabs) or downward (reads like a
-/// stack) - there's no separate "tabbed" vs "stacked" variant here.
+/// orientation. An accordion container's `TilingDirection` still
+/// determines whether it peeks sideways (reads like tabs) or downward
+/// (reads like a stack) - there's no separate "tabbed" vs "stacked"
+/// variant here.
 #[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ContainerLayout {

@@ -5,7 +5,9 @@ use super::{
   move_to_scratchpad::move_to_scratchpad,
   show_scratchpad_window::show_scratchpad_window,
 };
-use crate::{traits::CommonGetters, user_config::UserConfig, wm_state::WmState};
+use crate::{
+  traits::CommonGetters, user_config::UserConfig, wm_state::WmState,
+};
 
 /// Shows/hides the scratchpad's currently active window.
 ///

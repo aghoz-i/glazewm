@@ -2,10 +2,14 @@ use wm_common::WindowState;
 
 use crate::{
   commands::{
-    container::{attach_container, detach_container, set_focused_descendant},
-    window::{set_window_position, update_window_state, WindowPositionTarget},
+    container::{
+      attach_container, detach_container, set_focused_descendant,
+    },
+    window::{
+      set_window_position, update_window_state, WindowPositionTarget,
+    },
   },
-  models::{Workspace, WindowContainer},
+  models::{WindowContainer, Workspace},
   traits::WindowGetters,
   user_config::UserConfig,
   wm_state::WmState,
@@ -22,7 +26,11 @@ pub fn show_scratchpad_window(
   config: &UserConfig,
 ) -> anyhow::Result<()> {
   detach_container(window.clone().into())?;
-  attach_container(&window.clone().into(), &target_workspace.clone().into(), None)?;
+  attach_container(
+    &window.clone().into(),
+    &target_workspace.clone().into(),
+    None,
+  )?;
 
   // Queue a redraw unconditionally, since the window is transitioning from
   // hidden (scratchpad) to shown and needs to be re-evaluated on the next

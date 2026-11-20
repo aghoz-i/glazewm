@@ -2,8 +2,8 @@ use anyhow::Context;
 #[cfg(target_os = "windows")]
 use wm_common::WindowEffectConfig;
 use wm_common::{
-  ContainerLayout, CursorJumpTrigger, DisplayState, HideCorner, HideMethod,
-  UniqueExt, WindowState, WmEvent,
+  ContainerLayout, CursorJumpTrigger, DisplayState, HideCorner,
+  HideMethod, UniqueExt, WindowState, WmEvent,
 };
 #[cfg(target_os = "windows")]
 use wm_platform::NativeWindowWindowsExt;

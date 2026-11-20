@@ -13,9 +13,9 @@ use wm_common::{
 use wm_platform::Rect;
 
 use crate::{
-  impl_common_getters, impl_container_debug, impl_container_layout_getters,
-  impl_position_getters_as_resizable, impl_tiling_direction_getters,
-  impl_tiling_size_getters,
+  impl_common_getters, impl_container_debug,
+  impl_container_layout_getters, impl_position_getters_as_resizable,
+  impl_tiling_direction_getters, impl_tiling_size_getters,
   models::{
     Container, DirectionContainer, TilingContainer, WindowContainer,
   },

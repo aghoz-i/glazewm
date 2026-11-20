@@ -26,8 +26,8 @@ use crate::{
     },
     monitor::focus_monitor,
     scratchpad::{
-      move_to_scratchpad, remove_from_scratchpad, switch_scratchpad_window,
-      toggle_scratchpad,
+      move_to_scratchpad, remove_from_scratchpad,
+      switch_scratchpad_window, toggle_scratchpad,
     },
     window::{
       ignore_window, move_window_in_direction, move_window_to_workspace,

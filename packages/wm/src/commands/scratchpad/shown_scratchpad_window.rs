@@ -9,7 +9,9 @@ use crate::{
 /// There's at most one at a time - `toggle_scratchpad`/
 /// `switch_scratchpad_window` always hide the previously shown window
 /// before showing another one.
-pub fn find_shown_scratchpad_window(state: &WmState) -> Option<WindowContainer> {
+pub fn find_shown_scratchpad_window(
+  state: &WmState,
+) -> Option<WindowContainer> {
   state.windows().into_iter().find(|window| {
     window.is_scratchpad_window()
       && window

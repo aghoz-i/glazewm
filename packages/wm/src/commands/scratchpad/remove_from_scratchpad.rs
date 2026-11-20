@@ -15,8 +15,12 @@ pub fn remove_from_scratchpad(
   config: &UserConfig,
 ) -> anyhow::Result<()> {
   if let Some(shown_window) = find_shown_scratchpad_window(state) {
-    let window =
-      update_window_state(shown_window, WindowState::Tiling, state, config)?;
+    let window = update_window_state(
+      shown_window,
+      WindowState::Tiling,
+      state,
+      config,
+    )?;
 
     window.set_is_scratchpad_window(false);
   }

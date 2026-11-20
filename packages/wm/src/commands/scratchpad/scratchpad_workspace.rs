@@ -24,7 +24,9 @@ pub fn find_scratchpad_workspace(state: &WmState) -> Option<Workspace> {
 /// the first available monitor purely so it fits the container tree's
 /// invariant that workspaces have a parent monitor - it's never displayed,
 /// so which monitor it's attached to has no visible effect.
-pub fn scratchpad_workspace(state: &mut WmState) -> anyhow::Result<Workspace> {
+pub fn scratchpad_workspace(
+  state: &mut WmState,
+) -> anyhow::Result<Workspace> {
   if let Some(workspace) = find_scratchpad_workspace(state) {
     return Ok(workspace);
   }

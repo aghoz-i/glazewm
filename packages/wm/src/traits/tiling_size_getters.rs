@@ -45,7 +45,8 @@ pub trait TilingSizeGetters: CommonGetters {
   ///
   /// Mirrors `inner_gaps`'s convention of computing the horizontal value
   /// relative to the monitor's height and vice versa, so that a percentage
-  /// padding scales consistently regardless of the accordion's orientation.
+  /// padding scales consistently regardless of the accordion's
+  /// orientation.
   fn accordion_paddings(&self) -> anyhow::Result<(i32, i32)> {
     let monitor = self.monitor().context("No monitor.")?;
     let monitor_rect = monitor.native_properties().bounds;

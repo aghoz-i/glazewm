@@ -159,8 +159,9 @@ pub trait WindowGetters: CommonGetters {
 
   fn set_active_drag(&self, active_drag: Option<ActiveDrag>);
 
-  /// Whether the window was moved to the scratchpad via `move_to_scratchpad`
-  /// or `toggle_scratchpad` (i3's `move scratchpad`/`scratchpad show`).
+  /// Whether the window was moved to the scratchpad via
+  /// `move_to_scratchpad` or `toggle_scratchpad` (i3's `move
+  /// scratchpad`/`scratchpad show`).
   ///
   /// This persists while the window is shown from the scratchpad (i.e. it
   /// doesn't just mean "currently hidden in the scratchpad workspace"), so

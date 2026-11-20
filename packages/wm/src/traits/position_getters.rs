@@ -43,12 +43,12 @@ pub fn accordion_child_rect(
   let cascade = |dimension: i32, padding: i32| {
     let max_total_offset = (total_children - 1) * padding;
 
-    let safe_padding = if total_children > 1 && max_total_offset >= dimension
-    {
-      (dimension / total_children.max(2)).max(1)
-    } else {
-      padding
-    };
+    let safe_padding =
+      if total_children > 1 && max_total_offset >= dimension {
+        (dimension / total_children.max(2)).max(1)
+      } else {
+        padding
+      };
 
     let size = (dimension - (total_children - 1) * safe_padding).max(1);
 
@@ -59,7 +59,8 @@ pub fn accordion_child_rect(
 
   match parent.tiling_direction() {
     TilingDirection::Horizontal => {
-      let (x_offset, width) = cascade(parent_rect.width(), horizontal_padding);
+      let (x_offset, width) =
+        cascade(parent_rect.width(), horizontal_padding);
 
       Rect::from_xy(
         parent_rect.x() + x_offset,
@@ -69,7 +70,8 @@ pub fn accordion_child_rect(
       )
     }
     TilingDirection::Vertical => {
-      let (y_offset, height) = cascade(parent_rect.height(), vertical_padding);
+      let (y_offset, height) =
+        cascade(parent_rect.height(), vertical_padding);
 
       Rect::from_xy(
         parent_rect.x(),
