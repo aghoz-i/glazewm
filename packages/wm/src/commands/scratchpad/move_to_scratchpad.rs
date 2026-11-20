@@ -4,11 +4,11 @@ use wm_common::WindowState;
 use super::scratchpad_workspace::scratchpad_workspace;
 use crate::{
   commands::{
-    container::{move_container_within_tree, set_focused_descendant},
+    container::{attach_container, detach_container, set_focused_descendant},
     window::update_window_state,
   },
   models::WindowContainer,
-  traits::{CommonGetters, WindowGetters},
+  traits::WindowGetters,
   user_config::UserConfig,
   wm_state::WmState,
 };
@@ -18,6 +18,12 @@ use crate::{
 /// Equivalent to i3's `move scratchpad`. If the window is currently tiling,
 /// it's converted to floating first, since scratchpad windows are always
 /// shown as floating.
+///
+/// Uses `detach_container`/`attach_container` directly rather than
+/// `move_container_within_tree`, since the latter's focus-propagation logic
+/// (meant for ordinary tiling moves) would reorder the scratchpad
+/// workspace's children based on monitor focus history, making whichever
+/// window was just hidden jump back to the front every time.
 pub fn move_to_scratchpad(
   window: WindowContainer,
   state: &mut WmState,
@@ -48,12 +54,8 @@ pub fn move_to_scratchpad(
 
   let scratchpad_workspace = scratchpad_workspace(state)?;
 
-  move_container_within_tree(
-    &window.clone().into(),
-    &scratchpad_workspace.clone().into(),
-    scratchpad_workspace.child_count(),
-    state,
-  )?;
+  detach_container(window.clone().into())?;
+  attach_container(&window.clone().into(), &scratchpad_workspace.into(), None)?;
 
   window.set_is_scratchpad_window(true);
 
