@@ -253,6 +253,25 @@ keybindings:
   - commands: ['toggle-minimized']
     bindings: ['alt+m']
 
+  # Move the focused window to the scratchpad, hiding it.
+  - commands: ['move-to-scratchpad']
+    bindings: ['alt+oem_minus']
+
+  # Show the scratchpad's current window, or hide it again if it's
+  # currently shown.
+  - commands: ['toggle-scratchpad']
+    bindings: ['alt+shift+oem_minus']
+
+  # While a scratchpad window is shown, hide it and show the next one
+  # waiting in the scratchpad (if any).
+  - commands: ['switch-scratchpad-window']
+    bindings: ['alt+oem_period']
+
+  # Remove the currently shown scratchpad window from the scratchpad,
+  # tiling it into the current workspace.
+  - commands: ['remove-from-scratchpad']
+    bindings: ['alt+shift+oem_period']
+
   # Close focused window.
   - commands: ['close']
     bindings: ['alt+shift+q']

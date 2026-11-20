@@ -25,6 +25,10 @@ use crate::{
       platform_sync, reload_config, shell_exec, toggle_pause,
     },
     monitor::focus_monitor,
+    scratchpad::{
+      move_to_scratchpad, remove_from_scratchpad, switch_scratchpad_window,
+      toggle_scratchpad,
+    },
     window::{
       ignore_window, move_window_in_direction, move_window_to_workspace,
       resize_window, set_window_position, set_window_size,
@@ -434,6 +438,15 @@ impl WindowManager {
           _ => Ok(()),
         }
       }
+      InvokeCommand::MoveToScratchpad => {
+        match subject_container.as_window_container() {
+          Ok(window) => move_to_scratchpad(window, state, config),
+          _ => Ok(()),
+        }
+      }
+      InvokeCommand::RemoveFromScratchpad => {
+        remove_from_scratchpad(state, config)
+      }
       InvokeCommand::MoveWorkspace { direction } => {
         let workspace =
           subject_container.workspace().context("No workspace.")?;
@@ -732,8 +745,12 @@ impl WindowManager {
           _ => Ok(()),
         }
       }
+      InvokeCommand::ToggleScratchpad => toggle_scratchpad(state, config),
       InvokeCommand::ToggleTilingDirection => {
         toggle_tiling_direction(subject_container, state, config)
+      }
+      InvokeCommand::SwitchScratchpadWindow => {
+        switch_scratchpad_window(state, config)
       }
       InvokeCommand::SetTilingDirection { tiling_direction } => {
         set_tiling_direction(

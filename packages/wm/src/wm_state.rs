@@ -383,7 +383,11 @@ impl WmState {
           .and_then(|name| self.workspace_by_name(name)),
       ),
       WorkspaceTarget::NextActive => {
-        let active_workspaces = self.sorted_workspaces(config);
+        let active_workspaces: Vec<_> = self
+          .sorted_workspaces(config)
+          .into_iter()
+          .filter(|workspace| !workspace.is_scratchpad())
+          .collect();
         let origin_index = active_workspaces
           .iter()
           .position(|workspace| workspace.id() == origin_workspace.id())
@@ -399,7 +403,11 @@ impl WmState {
         )
       }
       WorkspaceTarget::PreviousActive => {
-        let active_workspaces = self.sorted_workspaces(config);
+        let active_workspaces: Vec<_> = self
+          .sorted_workspaces(config)
+          .into_iter()
+          .filter(|workspace| !workspace.is_scratchpad())
+          .collect();
         let origin_index = active_workspaces
           .iter()
           .position(|workspace| workspace.id() == origin_workspace.id())
@@ -421,7 +429,11 @@ impl WmState {
           .monitor()
           .context("No monitor in workspace")?;
 
-        let mut workspace_in_monitor = monitor.workspaces();
+        let mut workspace_in_monitor: Vec<_> = monitor
+          .workspaces()
+          .into_iter()
+          .filter(|workspace| !workspace.is_scratchpad())
+          .collect();
         config.sort_workspaces(&mut workspace_in_monitor);
 
         let origin_index = workspace_in_monitor
@@ -444,7 +456,11 @@ impl WmState {
           .monitor()
           .context("No monitor in workspace")?;
 
-        let mut workspace_in_monitor = monitor.workspaces();
+        let mut workspace_in_monitor: Vec<_> = monitor
+          .workspaces()
+          .into_iter()
+          .filter(|workspace| !workspace.is_scratchpad())
+          .collect();
         config.sort_workspaces(&mut workspace_in_monitor);
 
         let origin_index = workspace_in_monitor

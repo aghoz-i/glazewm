@@ -161,6 +161,15 @@ pub enum InvokeCommand {
   Focus(InvokeFocusCommand),
   Ignore,
   Move(InvokeMoveCommand),
+  /// Moves the subject window to the scratchpad, hiding it.
+  ///
+  /// Equivalent to i3's `move scratchpad`.
+  MoveToScratchpad,
+  /// Removes the currently shown scratchpad window from the scratchpad
+  /// pool, tiling it into the workspace it's shown on.
+  ///
+  /// A no-op unless a scratchpad window is currently shown.
+  RemoveFromScratchpad,
   MoveWorkspace {
     #[clap(long)]
     direction: Direction,
@@ -230,8 +239,19 @@ pub enum InvokeCommand {
     maximized: Option<bool>,
   },
   ToggleMinimized,
+  /// Shows/hides the scratchpad's currently active window.
+  ///
+  /// If a scratchpad window is currently shown, it's hidden again.
+  /// Otherwise, the most recently stashed scratchpad window is shown on
+  /// the focused workspace and focused.
+  ToggleScratchpad,
   ToggleTiling,
   ToggleTilingDirection,
+  /// Hides the currently shown scratchpad window and shows the next one.
+  ///
+  /// A no-op unless a scratchpad window is currently shown. If no other
+  /// window is waiting in the scratchpad, the current one stays shown.
+  SwitchScratchpadWindow,
   SetTilingDirection {
     #[clap(required = true)]
     tiling_direction: TilingDirection,
