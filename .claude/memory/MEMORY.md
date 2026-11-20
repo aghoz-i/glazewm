@@ -1,0 +1,3 @@
+- [GlazeWM i3-features project](glazewm_i3_features_project.md) — status of all 5 planned features, upstream PR/issue check, build setup
+- [GlazeWM scratchpad feature](glazewm_scratchpad_feature.md) — final 4-command design, root-cause bug in move_container_within_tree
+- [GlazeWM workflow feedback](feedback_glazewm_workflow.md) — pragmatic-over-faithful, manual log-driven testing, terse approvals
