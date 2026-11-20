@@ -7,17 +7,21 @@ use std::{
 use anyhow::Context;
 use uuid::Uuid;
 use wm_common::{
-  ContainerDto, GapsConfig, TilingDirection, WorkspaceConfig, WorkspaceDto,
+  ContainerDto, ContainerLayout, GapsConfig, TilingDirection, WorkspaceConfig,
+  WorkspaceDto,
 };
 use wm_platform::{Rect, RectDelta};
 
 use crate::{
-  impl_common_getters, impl_container_debug,
+  impl_common_getters, impl_container_debug, impl_container_layout_getters,
   impl_tiling_direction_getters,
   models::{
     Container, DirectionContainer, TilingContainer, WindowContainer,
   },
-  traits::{CommonGetters, PositionGetters, TilingDirectionGetters},
+  traits::{
+    CommonGetters, ContainerLayoutGetters, PositionGetters,
+    TilingDirectionGetters,
+  },
 };
 
 #[derive(Clone)]
@@ -32,6 +36,7 @@ struct WorkspaceInner {
   config: WorkspaceConfig,
   gaps_config: GapsConfig,
   tiling_direction: TilingDirection,
+  container_layout: ContainerLayout,
 }
 
 impl Workspace {
@@ -48,6 +53,7 @@ impl Workspace {
       config,
       gaps_config,
       tiling_direction,
+      container_layout: ContainerLayout::default(),
     };
 
     Self(Rc::new(RefCell::new(workspace)))
@@ -173,6 +179,7 @@ impl Workspace {
       x: rect.x(),
       y: rect.y(),
       tiling_direction: self.tiling_direction(),
+      container_layout: self.container_layout(),
     }))
   }
 }
@@ -180,6 +187,7 @@ impl Workspace {
 impl_container_debug!(Workspace);
 impl_common_getters!(Workspace);
 impl_tiling_direction_getters!(Workspace);
+impl_container_layout_getters!(Workspace);
 
 impl PositionGetters for Workspace {
   fn to_rect(&self) -> anyhow::Result<Rect> {

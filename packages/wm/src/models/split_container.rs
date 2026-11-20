@@ -7,20 +7,21 @@ use std::{
 use anyhow::Context;
 use uuid::Uuid;
 use wm_common::{
-  ContainerDto, GapsConfig, SplitContainerDto, TilingDirection,
+  ContainerDto, ContainerLayout, GapsConfig, SplitContainerDto,
+  TilingDirection,
 };
 use wm_platform::Rect;
 
 use crate::{
-  impl_common_getters, impl_container_debug,
+  impl_common_getters, impl_container_debug, impl_container_layout_getters,
   impl_position_getters_as_resizable, impl_tiling_direction_getters,
   impl_tiling_size_getters,
   models::{
     Container, DirectionContainer, TilingContainer, WindowContainer,
   },
   traits::{
-    CommonGetters, PositionGetters, TilingDirectionGetters,
-    TilingSizeGetters,
+    CommonGetters, ContainerLayoutGetters, PositionGetters,
+    TilingDirectionGetters, TilingSizeGetters,
   },
 };
 
@@ -35,6 +36,7 @@ struct SplitContainerInner {
   tiling_size: f32,
   tiling_direction: TilingDirection,
   gaps_config: GapsConfig,
+  container_layout: ContainerLayout,
 }
 
 impl SplitContainer {
@@ -50,6 +52,7 @@ impl SplitContainer {
       tiling_size: 1.0,
       tiling_direction,
       gaps_config,
+      container_layout: ContainerLayout::default(),
     };
 
     Self(Rc::new(RefCell::new(split)))
@@ -71,6 +74,7 @@ impl SplitContainer {
       has_focus: self.has_focus(None),
       tiling_size: self.tiling_size(),
       tiling_direction: self.tiling_direction(),
+      container_layout: self.container_layout(),
       width: rect.width(),
       height: rect.height(),
       x: rect.x(),
@@ -83,4 +87,5 @@ impl_container_debug!(SplitContainer);
 impl_common_getters!(SplitContainer);
 impl_tiling_size_getters!(SplitContainer);
 impl_tiling_direction_getters!(SplitContainer);
+impl_container_layout_getters!(SplitContainer);
 impl_position_getters_as_resizable!(SplitContainer);

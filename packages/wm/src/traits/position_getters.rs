@@ -23,6 +23,54 @@ macro_rules! impl_position_getters_as_resizable {
 
         let parent_rect = parent.to_rect()?;
 
+        if parent.container_layout() == ContainerLayout::Accordion {
+          let tiling_children =
+            parent.tiling_children().collect::<Vec<_>>();
+
+          #[allow(
+            clippy::cast_possible_truncation,
+            clippy::cast_possible_wrap
+          )]
+          let self_index = tiling_children
+            .iter()
+            .position(|child| child.id() == self.id())
+            .unwrap_or(0) as i32;
+
+          #[allow(
+            clippy::cast_possible_truncation,
+            clippy::cast_possible_wrap
+          )]
+          let focused_index = parent
+            .child_focus_order()
+            .find_map(|child| child.as_tiling_container().ok())
+            .and_then(|focused| {
+              tiling_children
+                .iter()
+                .position(|child| child.id() == focused.id())
+            })
+            .unwrap_or(0) as i32;
+
+          let offset = self_index - focused_index;
+
+          let (horizontal_padding, vertical_padding) =
+            self.accordion_paddings()?;
+
+          return Ok(match parent.tiling_direction() {
+            TilingDirection::Horizontal => Rect::from_xy(
+              parent_rect.x() + offset * horizontal_padding,
+              parent_rect.y(),
+              parent_rect.width(),
+              parent_rect.height(),
+            ),
+            TilingDirection::Vertical => Rect::from_xy(
+              parent_rect.x(),
+              parent_rect.y() + offset * vertical_padding,
+              parent_rect.width(),
+              parent_rect.height(),
+            ),
+          });
+        }
+
         let (horizontal_gap, vertical_gap) = self.inner_gaps()?;
         let inner_gap = match parent.tiling_direction() {
           TilingDirection::Vertical => vertical_gap,

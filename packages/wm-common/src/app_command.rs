@@ -6,7 +6,7 @@ use tracing::Level;
 use uuid::Uuid;
 use wm_platform::{Delta, Direction, LengthValue, OpacityValue};
 
-use crate::TilingDirection;
+use crate::{ContainerLayout, TilingDirection};
 
 const VERSION: &str = env!("VERSION_NUMBER");
 
@@ -144,6 +144,7 @@ pub enum SubscribableEvent {
   MonitorUpdated,
   MonitorRemoved,
   TilingDirectionChanged,
+  TilingLayoutChanged,
   UserConfigChanged,
   WindowManaged,
   WindowUnmanaged,
@@ -234,6 +235,14 @@ pub enum InvokeCommand {
   SetTilingDirection {
     #[clap(required = true)]
     tiling_direction: TilingDirection,
+  },
+  /// Toggles the subject container between normal `Tiling` layout and
+  /// `Accordion` layout (windows overlap, focused one on top, others
+  /// peeking out at the edge).
+  ToggleTilingLayout,
+  SetTilingLayout {
+    #[clap(required = true)]
+    container_layout: ContainerLayout,
   },
   WmCycleFocus {
     #[clap(long, default_value_t = false)]

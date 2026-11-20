@@ -2,8 +2,8 @@ use anyhow::Context;
 #[cfg(target_os = "windows")]
 use wm_common::WindowEffectConfig;
 use wm_common::{
-  CursorJumpTrigger, DisplayState, HideCorner, HideMethod, UniqueExt,
-  WindowState, WmEvent,
+  ContainerLayout, CursorJumpTrigger, DisplayState, HideCorner, HideMethod,
+  UniqueExt, WindowState, WmEvent,
 };
 #[cfg(target_os = "windows")]
 use wm_platform::NativeWindowWindowsExt;
@@ -12,8 +12,10 @@ use wm_platform::{CornerStyle, OpacityValue};
 use wm_platform::{Rect, WindowZOrder};
 
 use crate::{
-  models::{Container, WindowContainer},
-  traits::{CommonGetters, PositionGetters, WindowGetters},
+  models::{Container, TilingContainer, WindowContainer},
+  traits::{
+    CommonGetters, ContainerLayoutGetters, PositionGetters, WindowGetters,
+  },
   user_config::UserConfig,
   wm_state::WmState,
 };
@@ -108,6 +110,94 @@ fn sync_focus(
   });
 
   Ok(())
+}
+
+/// Gets the z-order for a window whose parent is an accordion-layout
+/// container, chaining it immediately after whichever sibling sits one
+/// step closer to the focused child.
+///
+/// Returns `None` if the window isn't a child of an accordion container,
+/// in which case the caller should fall back to the normal single-relation
+/// z-order logic.
+///
+/// This exists because the normal logic only guarantees the focused window
+/// is in front of *everything else* - it says nothing about the relative
+/// order *among* the non-focused siblings, which for 2 siblings doesn't
+/// matter (there's only one "other") but for 3+ accordion siblings would
+/// otherwise order them by focus-recency history rather than by how far
+/// they peek out, causing a sibling that should peek far behind to render
+/// in front of one that should peek closer.
+fn accordion_z_order(
+  window: &WindowContainer,
+) -> anyhow::Result<Option<WindowZOrder>> {
+  let Some(parent) = window
+    .parent()
+    .and_then(|parent| parent.as_direction_container().ok())
+  else {
+    return Ok(None);
+  };
+
+  if parent.container_layout() != ContainerLayout::Accordion {
+    return Ok(None);
+  }
+
+  let tiling_children = parent.tiling_children().collect::<Vec<_>>();
+
+  let Some(self_index) = tiling_children
+    .iter()
+    .position(|child| child.id() == window.id())
+  else {
+    return Ok(None);
+  };
+
+  #[allow(clippy::cast_possible_truncation, clippy::cast_possible_wrap)]
+  let focused_index = parent
+    .child_focus_order()
+    .find_map(|child| child.as_tiling_container().ok())
+    .and_then(|focused| {
+      tiling_children
+        .iter()
+        .position(|child| child.id() == focused.id())
+    })
+    .unwrap_or(0) as i32;
+
+  // Order siblings by distance from the focused child (closest first), so
+  // each one chains after whichever sibling is one step closer - giving a
+  // stable back-to-front order that matches the peek layout, regardless of
+  // focus history.
+  let mut order: Vec<usize> = (0..tiling_children.len()).collect();
+  #[allow(clippy::cast_possible_truncation, clippy::cast_possible_wrap)]
+  order.sort_by_key(|&i| (i as i32 - focused_index).abs());
+
+  let position_in_order = order
+    .iter()
+    .position(|&i| i == self_index)
+    .context("Window not found in its own accordion ordering.")?;
+
+  if position_in_order == 0 {
+    return Ok(Some(WindowZOrder::Normal));
+  }
+
+  let prev_window =
+    representative_window(&tiling_children[order[position_in_order - 1]]);
+
+  Ok(prev_window.map(|prev| WindowZOrder::AfterWindow(prev.native().id())))
+}
+
+/// Gets the window that represents a tiling container for z-ordering
+/// purposes: itself if it's a window, or its focused descendant window if
+/// it's a split container (e.g. a nested accordion tab containing its own
+/// sub-layout).
+fn representative_window(
+  container: &TilingContainer,
+) -> Option<WindowContainer> {
+  match container {
+    TilingContainer::TilingWindow(window) => Some(window.clone().into()),
+    TilingContainer::Split(split) => split
+      .descendant_focus_order()
+      .next()
+      .and_then(|descendant| descendant.as_window_container().ok()),
+  }
 }
 
 /// Finds windows that should be brought to the top of their workspace's
@@ -229,19 +319,23 @@ fn redraw_containers(
         WindowZOrder::TopMost
       }
       _ if should_bring_to_front => {
-        let focused_descendant = workspace
-          .descendant_focus_order()
-          .next()
-          .and_then(|container| container.as_window_container().ok());
-
-        if let Some(focused_descendant) = focused_descendant {
-          if window.id() == focused_descendant.id() {
-            WindowZOrder::Normal
-          } else {
-            WindowZOrder::AfterWindow(focused_descendant.native().id())
-          }
+        if let Some(z_order) = accordion_z_order(window)? {
+          z_order
         } else {
-          WindowZOrder::Normal
+          let focused_descendant = workspace
+            .descendant_focus_order()
+            .next()
+            .and_then(|container| container.as_window_container().ok());
+
+          if let Some(focused_descendant) = focused_descendant {
+            if window.id() == focused_descendant.id() {
+              WindowZOrder::Normal
+            } else {
+              WindowZOrder::AfterWindow(focused_descendant.native().id())
+            }
+          } else {
+            WindowZOrder::Normal
+          }
         }
       }
       _ => WindowZOrder::Normal,
