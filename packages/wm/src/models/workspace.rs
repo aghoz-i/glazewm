@@ -20,6 +20,13 @@ use crate::{
   traits::{CommonGetters, PositionGetters, TilingDirectionGetters},
 };
 
+/// Name of the internal workspace used to store hidden scratchpad windows.
+///
+/// This workspace is never declared in the user's config and is excluded
+/// from workspace cycling/queries, mirroring i3's special scratchpad
+/// output.
+pub const SCRATCHPAD_WORKSPACE_NAME: &str = "__scratchpad__";
+
 #[derive(Clone)]
 pub struct Workspace(Rc<RefCell<WorkspaceInner>>);
 
@@ -69,6 +76,11 @@ impl Workspace {
       .monitor()
       .and_then(|monitor| monitor.displayed_workspace())
       .is_some_and(|workspace| workspace.id() == self.id())
+  }
+
+  /// Whether this is the internal, hidden scratchpad workspace.
+  pub fn is_scratchpad(&self) -> bool {
+    self.config().name == SCRATCHPAD_WORKSPACE_NAME
   }
 
   pub fn set_gaps_config(&self, gaps_config: GapsConfig) {

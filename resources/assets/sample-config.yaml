@@ -241,6 +241,16 @@ keybindings:
   - commands: ['toggle-minimized']
     bindings: ['alt+m']
 
+  # Move the focused window to the scratchpad, hiding it. Equivalent to
+  # i3's `move scratchpad`.
+  - commands: ['move-to-scratchpad']
+    bindings: ['alt+minus']
+
+  # Show the most recently stashed scratchpad window, or hide it again if
+  # it's currently shown and focused. Equivalent to i3's `scratchpad show`.
+  - commands: ['toggle-scratchpad']
+    bindings: ['alt+shift+minus']
+
   # Close focused window.
   - commands: ['close']
     bindings: ['alt+shift+q']

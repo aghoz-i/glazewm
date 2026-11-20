@@ -160,6 +160,10 @@ pub enum InvokeCommand {
   Focus(InvokeFocusCommand),
   Ignore,
   Move(InvokeMoveCommand),
+  /// Moves the subject window to the scratchpad, hiding it.
+  ///
+  /// Equivalent to i3's `move scratchpad`.
+  MoveToScratchpad,
   MoveWorkspace {
     #[clap(long)]
     direction: Direction,
@@ -229,6 +233,13 @@ pub enum InvokeCommand {
     maximized: Option<bool>,
   },
   ToggleMinimized,
+  /// Shows/hides a window from the scratchpad.
+  ///
+  /// Equivalent to i3's `scratchpad show`. If the subject window is
+  /// currently shown from the scratchpad, it's hidden again. Otherwise, the
+  /// most recently stashed scratchpad window is shown on the subject's
+  /// workspace and focused.
+  ToggleScratchpad,
   ToggleTiling,
   ToggleTilingDirection,
   SetTilingDirection {

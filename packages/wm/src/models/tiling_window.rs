@@ -48,6 +48,7 @@ struct TilingWindowInner {
   gaps_config: GapsConfig,
   done_window_rules: Vec<WindowRuleConfig>,
   active_drag: Option<ActiveDrag>,
+  is_scratchpad_window: bool,
 }
 
 impl TilingWindow {
@@ -63,6 +64,7 @@ impl TilingWindow {
     gaps_config: GapsConfig,
     done_window_rules: Vec<WindowRuleConfig>,
     active_drag: Option<ActiveDrag>,
+    is_scratchpad_window: bool,
   ) -> Self {
     let window = TilingWindowInner {
       id: id.unwrap_or_else(Uuid::new_v4),
@@ -82,6 +84,7 @@ impl TilingWindow {
       gaps_config,
       done_window_rules,
       active_drag,
+      is_scratchpad_window,
     };
 
     Self(Rc::new(RefCell::new(window)))
@@ -104,6 +107,7 @@ impl TilingWindow {
       self.has_custom_floating_placement(),
       self.done_window_rules(),
       self.active_drag(),
+      self.is_scratchpad_window(),
     )
   }
 

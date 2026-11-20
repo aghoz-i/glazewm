@@ -193,6 +193,7 @@ impl IpcServer {
               .state
               .workspaces()
               .into_iter()
+              .filter(|workspace| !workspace.is_scratchpad())
               .map(|workspace| workspace.to_dto())
               .try_collect()?,
           })

@@ -159,6 +159,16 @@ pub trait WindowGetters: CommonGetters {
 
   fn set_active_drag(&self, active_drag: Option<ActiveDrag>);
 
+  /// Whether the window was moved to the scratchpad via `move_to_scratchpad`
+  /// or `toggle_scratchpad` (i3's `move scratchpad`/`scratchpad show`).
+  ///
+  /// This persists while the window is shown from the scratchpad (i.e. it
+  /// doesn't just mean "currently hidden in the scratchpad workspace"), so
+  /// that a later `toggle_scratchpad` can hide it again.
+  fn is_scratchpad_window(&self) -> bool;
+
+  fn set_is_scratchpad_window(&self, is_scratchpad_window: bool);
+
   /// Gets the cached native window properties.
   fn native_properties(&self) -> NativeWindowProperties;
 
@@ -172,7 +182,8 @@ pub trait WindowGetters: CommonGetters {
 ///
 /// Expects that the struct has a wrapping `RefCell` containing a struct
 /// with a `state`, `prev_state`, `native`, `has_pending_dpi_adjustment`,
-/// `border_delta`, `display_state`, and a `done_window_rules` field.
+/// `border_delta`, `display_state`, `done_window_rules`, and an
+/// `is_scratchpad_window` field.
 #[macro_export]
 macro_rules! impl_window_getters {
   ($struct_name:ident) => {
@@ -264,6 +275,14 @@ macro_rules! impl_window_getters {
 
       fn set_active_drag(&self, active_drag: Option<ActiveDrag>) {
         self.0.borrow_mut().active_drag = active_drag;
+      }
+
+      fn is_scratchpad_window(&self) -> bool {
+        self.0.borrow().is_scratchpad_window
+      }
+
+      fn set_is_scratchpad_window(&self, is_scratchpad_window: bool) {
+        self.0.borrow_mut().is_scratchpad_window = is_scratchpad_window;
       }
 
       fn native_properties(&self) -> NativeWindowProperties {

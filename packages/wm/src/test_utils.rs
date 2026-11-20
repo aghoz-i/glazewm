@@ -163,6 +163,7 @@ impl NonTilingWindow {
       false,
       vec![],
       None,
+      false,
     )
   }
 }
@@ -216,6 +217,7 @@ impl TilingWindow {
       gaps_config,
       vec![],
       None,
+      false,
     );
 
     window.set_tiling_size(tiling_size);

@@ -224,6 +224,7 @@ fn create_window(
       gaps_config,
       Vec::new(),
       None,
+      false,
     )
     .into(),
     _ => NonTilingWindow::new(
@@ -238,6 +239,7 @@ fn create_window(
       !prefers_centered,
       Vec::new(),
       None,
+      false,
     )
     .into(),
   };
